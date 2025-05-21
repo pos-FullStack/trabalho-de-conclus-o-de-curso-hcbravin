@@ -1,0 +1,7 @@
+127.0.0.1 - - [21/May/2025:17:41:55 -0300] "GET /meubanco.com/public_html/ HTTP/1.1" 200 203 "http://meubanco.com/meubanco.com/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:17:41:59 -0300] "GET / HTTP/1.1" 200 202 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:17:42:36 -0300] "GET / HTTP/1.1" 200 203 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:18:00:07 -0300] "GET / HTTP/1.1" 200 702 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:18:03:51 -0300] "GET / HTTP/1.1" 200 1806 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:18:04:11 -0300] "GET / HTTP/1.1" 200 1812 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+127.0.0.1 - - [21/May/2025:18:04:25 -0300] "GET / HTTP/1.1" 200 1808 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
