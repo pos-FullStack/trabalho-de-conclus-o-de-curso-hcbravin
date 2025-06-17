@@ -1,0 +1,27 @@
+<div class="card">
+	<div class="card-header pad-main text-white bg-"><i class="fa fa-"></i></div>
+	<div class="card-body">
+		
+	</div>
+</div>
+
+
+<div class="card">
+	<div class="card-header pad-main text-white bg-">
+		<div class="row">
+			<div class="col-"></div>
+			<div class="col-"></div>
+		</div>
+	</div>
+	<div class="card-body">
+		
+	</div>
+</div>
+
+
+$('#BookColection').DataTable({"paging": false,"ordering": false,"info": false});
+Table.search( '' ).columns().search( '' ).draw();
+
+
+//// tudo no mesmo height
+col -> d-flex align-items-stretch w-100

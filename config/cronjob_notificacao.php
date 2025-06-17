@@ -1,0 +1,1 @@
+<?php $db -> query("UPDATE sms SET sms_status = 0 WHERE sms_status = 100 AND TIMESTAMPDIFF(MINUTE,sms_dref,NOW()) > 60;");

@@ -1,0 +1,34 @@
+<div class="modal" tabindex="-1" id="PVLeg">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header pad-main bg-info text-white ft10">
+				<span class="modal-title"><i class="fa fa-question"></i> <span class="PVGLTitulo"></span></span>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p class="d-off introducao">Descreve de forma sucinta um diagnóstico da realidade pessoal. Deve apresentar dados e evidências sobre a sua própria condição. Comenta sobre a sua trajetória realizada, descreve brevemente o seu perfil e com quais pessoas você conta em sua vida.</p>
+				<p class="d-off valores">São as convicções e crenças dominantes definidas por você e que nortearão as suas decisões e a realização das suas ações.</p>
+				<p class="d-off visao">Expressa uma condição futura, idealizada sem as limitações do tempo presente, mas com a definição do prazo para a sua realização. O que você deseja realizar? Qual é a situação de futuro que pretendo para a sua vida?</p>
+				<p class="d-off missao">É uma reflexão sobre a sua razão de ser e de existir. Deve ser clara, objetiva e desafiadora, abrangendo as características que possui e que o diferencia.</p>
+				<p class="d-off premissas">As premissas são o ponto de partida para a definição de objetivos, prioridades e metas. Se as premissas são falsas, mesmo que o raciocínio seja correto, a conclusão ou resultado tende a ser falso, incorreto ou inesperado. As premissas são marcos que representam os princípios básicos, aos quais se conectam objetivos, prioridades e resultados esperados.</p>
+				<p class="d-off objetivos">Os objetivos estabelecem e expressam o cenário ideal e é a descrição daquilo que se pretende alcançar ao final Devem ser tangíveis, claros, precisos e observáveis ao final de um período determinado.</p>
+				<p class="d-off prioridades">Estabelecer prioridades significa definir o que é mais importante, o que vem primeiro, o que fará a diferença na consecução dos objetivos. É importante refletir sobre cada um dos objetivos, elegendo como prioritários os pontos que provocarão maior impacto nos resultados ao longo do tempo. Uma das razões do fracasso na obtenção dos resultados previstos se deve à perda de foco nas prioridades. Portanto, deve-se instituir e praticar uma constante avaliação entre os resultados parciais vis-à-vis as metas planejadas. Tudo na vida é importante, mas nem tudo é prioritário. As coisas se tornam urgentes em função de um planejamento ineficaz e insuficiente. Prioritário é aquilo que, ao ser levado a cabo, nos leva a alcançar os resultados esperados.</p>
+				<p class="d-off metas">É importante refletir sobre cada uma das metas, elegendo aquelas que provocarão maior impacto nos resultados que pretende alcançar. O estabelecimento de metas e prioridades conjuntas (contemplando curto, médio e longo prazo) deve refletir a sua missão.</p>
+				<p class="d-off resultados">Indicador de resultado é aquele que mede o que foi obtido função das metas pretendidas</p>
+				<p class="d-off processos">Indicador de processo é aquele que monitora a tendência de uma certa meta para que seja possível fazer mudanças durante o percurso, em tempo de corrigir o rumo e garantir o resultado final.</p>
+				<p class="d-off estrategias">É a gestão dos meios (e recursos) disponíveis para a consecução dos objetivos. A estratégia possibilita a transformação da intenção em ação presente. A estratégia sintetiza e qualifica o conjunto das ações a serem desenvolvidas visando a consecução dos objetivos traçados. O sucesso na definição das estratégias está condicionado ao conhecimento da sua realidade atual e passada e na existência de processo analítico robusto indicando as expectativas futuras onde a escola atua ou pretende atuar</p>
+				<p class="d-off acoes">É o desdobramento do conjunto de ações, detalhando em atividades, responsáveis e prazos de execução. Viabiliza e operacionaliza a estratégia, sendo condição necessária para o cumprimento dos resultados esperados de curto e médio prazo. Estratégia sem ação não passa de mera intenção. Monitorar o desempenho das ações estabelecidas permite estabelecer ajustes ou mudanças nas estratégias traçadas</p>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$('i.HGoogle').click(function(){
+		$('#PVLeg .modal-body p').hide();
+		$('#PVLeg .modal-body p.'+$(this).data('id')).show();
+		$('#PVLeg .modal-title span').html($(this).data('id').toUpperCase());
+		$('#PVLeg').modal('show');	
+	});
+</script>

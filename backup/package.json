@@ -1,0 +1,21 @@
+{
+  "name": "edbank",
+  "version": "1.0.0",
+  "description": "App financeiro educacional EDBank",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "cp node_modules/bootstrap/dist/css/bootstrap.min.css public_html/assets/css/ && cp -r node_modules/@fortawesome/fontawesome-free/css public_html/assets/css/fontawesome",
+    "build-js": "cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js public_html/assets/js/ && cp node_modules/jquery/dist/jquery.min.js public_html/assets/js/ && cp node_modules/chart.js/dist/chart.min.js public_html/assets/js/",
+    "build-fa-webfonts": "cp -r node_modules/@fortawesome/fontawesome-free/webfonts public_html/assets/webfonts",
+    "build": "npm run build-css && npm run build-js && npm run build-fa-webfonts"
+  },
+  "author": "Henrique",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "bootstrap": "^5.3.0",
+    "chart.js": "^4.3.0",
+    "jquery": "^3.7.0"
+  }
+}
+

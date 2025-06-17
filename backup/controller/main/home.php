@@ -1,0 +1,1 @@
+<?php require_once Views.'/main/home.php';
