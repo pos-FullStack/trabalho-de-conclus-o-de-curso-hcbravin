@@ -1,6 +1,95 @@
 <?php
 
-use Intervention\Image\ImageManager;
+use Intervention\Image\ImageManager; 
+
+// API do BCB (SGS) para puxar o CDI histórico.
+class Taxas {
+	private $DadosHistoricos;
+
+	public function __construct(){
+		$this -> Update();
+		$this -> Historico();
+	}
+
+	private function Api(){
+		$Json = @file_get_contents('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json');
+		return (strlen($Json) == 0) ? false : $Json;
+	}
+
+	private function Update(){
+		$File = __ROOT__ . '/files/taxa_juros.json';
+		
+		if (!file_exists($File)) {
+			file_put_contents($File, $this -> Api());
+			return;
+		}
+
+		// Obtém a data de modificação do arquivo
+		$dataModificacao = filemtime($File);
+
+		// Obtém o mês e ano da modificação do arquivo
+		$mesModificacao = date('n', $dataModificacao);
+		$anoModificacao = date('Y', $dataModificacao);
+
+		// Obtém o mês e ano atuais
+		$mesAtual = date('n');
+		$anoAtual = date('Y');
+
+		// Verifica se a modificação foi em um mês anterior ao atual
+    	if ($anoModificacao < $anoAtual || ($anoModificacao == $anoAtual && $mesModificacao < $mesAtual)) {
+			// Atualiza o arquivo
+			file_put_contents($File, $this -> Api());
+		}
+
+	}
+
+	public function Historico(){
+		$this -> DadosHistoricos = json_decode(file_get_contents( __ROOT__ . '/files/taxa_juros.json'),true);
+		$this -> DadosHistoricos = is_array($this -> DadosHistoricos)?$this -> DadosHistoricos:[];
+		return $this -> DadosHistoricos;
+	}
+
+	public function MediaAnual(){
+		$Media = [];
+		foreach($this->DadosHistoricos as $Valor){
+			$Media[date('Y',strtotime($Valor['data']))][] = floatval($Valor['valor']);
+		}
+
+		foreach($Media as $Ano => $Valor){
+			if(is_array($Valor) AND count($Valor)){
+				$Media[$Ano] = number_format(array_sum($Valor)/count($Valor),3);
+			}else{ unset($Media[$Ano]); }
+		}
+		
+		return $Media;
+	}
+}
+
+// AGÊNCIA
+class Agencia {
+	public $numero;
+
+	public function Criar($cep,$key){
+		global $db, $MS;
+		$key = ($key) ? BaseEL_encode(rand(999,999999)) : NULL;
+		$Ins = $db -> prepare("INSERT INTO agencia (ag_user,ag_num,ag_cep,ag_key) VALUES (?, (
+			SELECT MAX(ag_num) + 1 FROM agencia
+		), ?, ?)");
+		$Ins -> bind_param("iss", $MS['ui_id'], $cep, $key);
+		if(!$Ins -> execute()){return false;}
+		return $Ins -> insert_id;
+	}
+
+	public function Buscar(){
+		global $db; 
+		$Base = $db -> prepare("SELECT ag_num as numero, ag_cep as cep, LENGTH(ag_key) as chave, ui_nome as gerente FROM agencia
+		INNER JOIN userinfo ON (userinfo.ui_id = agencia.ag_user)
+		WHERE ag_num = ?");
+		$Base -> bind_param("i",$this->numero);
+		if(!$Base->execute()){return false;}
+		return $Base -> get_result() -> fetch_assoc();
+	}
+}
 
 // CARTOES
 class Cartoes
@@ -238,6 +327,7 @@ class Usuario
 		
 
 		$_SESSION['contas'] = $this->Contas();
+		$_SESSION['gerente'] = $this->Gerente();
 		$_SESSION['id'] = (count($_SESSION['contas']) == 1) ? array_key_first($_SESSION['contas']) : false; // ATRIBUI A CONTA
 
 		shdr('home', 0); // REDIRECIONA PARA O HOME PAGE DO USUARIO
@@ -257,6 +347,32 @@ class Usuario
 		$Base->bind_param("i", $this->id);
 		if ($Base->execute()) {
 			return ReKey($Base->get_result()->fetch_all(MYSQLI_ASSOC), 'cl_id');
+		}
+		return [];
+	}
+
+	private function Gerente()
+	{
+		global $db;
+		if (!is_numeric($this->id)) {
+			return [];
+		}
+		$Base = $db->prepare("SELECT 
+			a.ag_id,
+			a.ag_num,
+			a.ag_user,
+			a.ag_cep,
+			a.ag_key,
+			a.ag_dref,
+			COUNT(c.cl_id) AS total_clientes
+		FROM  agencia a
+		LEFT JOIN clientes c ON a.ag_id = c.cl_agencia
+		WHERE  a.ag_user = ?
+		GROUP BY  a.ag_id, a.ag_num, a.ag_user, a.ag_cep, a.ag_key, a.ag_dref
+		ORDER BY a.ag_num ASC");
+		$Base->bind_param("i", $this->id);
+		if ($Base->execute()) {
+			return ReKey($Base->get_result()->fetch_all(MYSQLI_ASSOC), 'ag_id');
 		}
 		return [];
 	}

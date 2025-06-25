@@ -10,7 +10,16 @@ $Dados = ['P'=>[], 'B'=>[], 'U'=>[],'E'=>[],'D'=>[], 'PRO'=>['U'=>0,'I'=>0,'D'=>
 $Map = []; $C=0; $SNull = '';
 
 // --------------------- FUNÇÕES GERAIS
-
+if($URI[1]=='criar-agencia'){
+    $Agencia = New Agencia();
+    $Criar = $Agencia -> Criar($P['agencia']['cep'], isset($P['agencia']['key']));
+    if($Criar){
+        shdr("agencia/$Criar");
+    }else{
+        alert('Houve um erro e sua agência não pode ser criada.');
+        shdr('home');
+    }
+goto Status;}
 
 // --------------------- FUNÇÕES ADIMINISTRATIVAS
 if($MEUTIPO == 0){

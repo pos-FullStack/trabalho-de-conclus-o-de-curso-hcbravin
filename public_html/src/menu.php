@@ -1,7 +1,5 @@
 <div class="accordion accordion-flush" id="accordionFlushMenu">
 
-	<!--	<a class="list-group-item list-group-item-action list-group-item-light p-3" href="/turmas"><i class="fa fa-chalkboard me-1"></i> Turmas</a> -->
-
 	<?php if ($MEUTIPO == 0) { // ADMIN 
 	?>
 
@@ -56,12 +54,6 @@
 				<div class="accordion-body p-1">
 					<ul class="nav flex-column px-0">
 						<li class="nav-item"><a class="nav-link" href="/pedagogico/rendimento"><i class="far me-1 fa-file-lines"></i> Rendimento</a></li>
-						<!--
-						<li>
-							<hr class="my-0">
-						</li>
-						<li class="nav-item"><a class="nav-link" href="/pedagogico/pautas"><i class="far me-1 fa-file"></i> Estudo Orientado</a></li>
-						-->
 					</ul>
 				</div>
 			</div>
