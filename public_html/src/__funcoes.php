@@ -34,7 +34,7 @@ function Data($data=null,$tipo=null){
 		return $BR[$data];
 	}
 	if($tipo == 13){return date('W',strtotime(str_replace('/','-',$data)));} // RETORNA O NUMERO DA SEMANA
-	if($tipo == 14){return date('Y', strtotime(str_replace('/','-',$data)));} // RETORNA O ANO
+	if($tipo == 14 OR $tipo == 'ano'){return date('Y', strtotime(str_replace('/','-',$data)));} // RETORNA O ANO
 
 	if($tipo == 28){
 		$DiaExtenso = [
@@ -110,7 +110,21 @@ function Data($data=null,$tipo=null){
 		for($c=0;$c<=4;$c++){$Fim[] = date('d/m/Y', strtotime($data." + $c day"));} return $Fim;
     }
 }
-
+function ZeroEsquerda($numero) {
+    // Converte o número para string para contar os caracteres
+    $numeroStr = (string)$numero;
+    $quantidadeCaracteres = strlen($numeroStr);
+    
+    // Verifica se a quantidade de caracteres é menor que 5
+    if ($quantidadeCaracteres < 5) {
+        // Completa com zeros à esquerda até ter 5 caracteres
+        $numeroFormatado = str_pad($numeroStr, 5, '0', STR_PAD_LEFT);
+        return $numeroFormatado;
+    } else {
+        // Retorna o número original se já tiver 5 ou mais caracteres
+        return $numeroStr;
+    }
+}
 function BaseEL_encode($num) {
     $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'; // Base58 sem 0, O, I, l
     $digits = '123456789'; // Apenas números de 1 a 9 (evitando 0)

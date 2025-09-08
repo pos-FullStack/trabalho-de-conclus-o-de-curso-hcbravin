@@ -78,48 +78,50 @@
 <div class="modal" tabindex="-1" id="ModalNovaConta">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header text-bg-info">
-                <h5 class="modal-title"><i class="fa fa-piggy-bank me-1"></i> Abrir Nova Conta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row justify-content-center mb-2">
-                    <div class="col-12 col-sm-6">
-                        <label for="NovaAgenciaID"><i class="fa fa-bank me-1"></i> AGÊNCIA</label>
-                        <div class="input-group">
-                            <input type="number" step="1" id="NovaAgenciaID" name="agencia[numero]" required="required" class="form-control form-control-sm text-center">
+            <form action="/exe/abrir-conta" method="post">
+                <div class="modal-header text-bg-info">
+                    <h5 class="modal-title"><i class="fa fa-piggy-bank me-1"></i> Abrir Nova Conta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center mb-2">
+                        <div class="col-12 col-sm-6">
+                            <label for="NovaAgenciaID"><i class="fa fa-bank me-1"></i> AGÊNCIA</label>
+                            <div class="input-group">
+                                <input type="number" step="1" id="NovaAgenciaID" name="agencia[numero]" required="required" class="form-control form-control-sm text-center">
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="NovaAgenciaKeyInfo"><i class="fa fa-key me-1"></i> CÓDIGO DE ACESSO</label>
+                                <input type="text" id="NovaAgenciaKeyInfo" disabled name="agencia[key]" required="required" class="form-control form-control-sm text-center">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="form-group">
-                            <label for="NovaAgenciaKeyInfo"><i class="fa fa-key me-1"></i> CÓDIGO DE ACESSO</label>
-                            <input type="text" id="NovaAgenciaKeyInfo" disabled name="agencia[key]" required="required" class="form-control form-control-sm text-center">
+                    <div class="row justify-content-center">
+                        <div class="col-12 collapse" id="NovaAgenciaErro">
+                            <div class="infomain bd-1 bd-danger text-center">Agência não encontrada.</div>
                         </div>
+                        <div class="col-12 col-sm-8 my-1 collapse" id="NovaAgenciaGerente">
+                            <span class="ft-9"><i class="fa fa-user me-1"></i> GERENTE</span>
+                            <div class="infomain bd-1 bd-info text-uppercase"></div>
+                        </div>
+                        <div class="col-12 col-sm-4 my-1 collapse" id="NovaAgenciaCEPInfo">
+                            <span class="ft-9"><i class="fa fa-city me-1"></i> CEP</span>
+                            <div class="infomain bd-1 bd-info text-center"></div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col-12 collapse" id="NovaAgenciaErro">
-                        <div class="infomain bd-1 bd-danger text-center">Agência não encontrada.</div>
-                    </div>
-                    <div class="col-12 col-sm-8 my-1 collapse" id="NovaAgenciaGerente">
-                        <span class="ft-9"><i class="fa fa-user me-1"></i> GERENTE</span>
-                        <div class="infomain bd-1 bd-info text-uppercase"></div>
-                    </div>
-                    <div class="col-12 col-sm-4 my-1 collapse" id="NovaAgenciaCEPInfo">
-                        <span class="ft-9"><i class="fa fa-city me-1"></i> CEP</span>
-                        <div class="infomain bd-1 bd-info text-center"></div>
+                <div class="modal-footer collapse text-end" id="NovaAgenciaFooter">
+                    <div class="infomain bd-1 bd-warning mb-1 text-center">
+                        Ao criar sua conta na agência você concorda com <a href="/files/Politicas_de_Privacidade.pdf" class="text-primary" target="_blank">nossas políticas</a>.
                     </div>
 
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-sm btn-primary" id="NovaAgenciaSubmit">Abrir Conta</button>
                 </div>
-            </div>
-            <div class="modal-footer collapse text-end" id="NovaAgenciaFooter">
-                <div class="infomain bd-1 bd-warning mb-1 text-center">
-                    Ao criar sua conta na agência você concorda com <a href="/files/Politicas_de_Privacidade.pdf">nossas políticas</a>.
-                </div>
-
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="submit" class="btn btn-sm btn-primary" id="NovaAgenciaSubmit">Abrir Conta</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>

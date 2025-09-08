@@ -2,25 +2,73 @@
 
 use Intervention\Image\ImageManager; 
 
+// SORTE OU REVES
+class Sorte {
+	private $Cards, $Salario;
+
+	public function __construct(){
+		$this -> Salario();
+	}
+
+	public function getCards(){
+		global $db;
+		$Base = $db -> query("SELECT sorte_reves.*, 0.00 as sr_calc FROM sorte_reves") -> fetch_all(MYSQLI_ASSOC);
+		$this -> Cards = ReKey($Base,'sr_id');
+		foreach($this -> Cards as $KeyC=>$ViewC){
+			$this -> Cards[$KeyC]['sr_calc'] = number_format((is_numeric($ViewC['sr_porcentagem']) ? ($ViewC['sr_porcentagem'] / 100 * $this -> Salario) : $ViewC['sr_valor']),2);
+		}
+		return $this -> Cards;
+	}
+
+	private function Salario(){
+		$Json = @json_decode(file_get_contents(__ROOT__ . '/files/salario_minimo.json'),true)[0];
+		$this -> Salario = floatval((is_array($Json) AND array_key_exists('valor',$Json)) ? $Json['valor'] : 0);
+	}
+	
+}
+
 // API do BCB (SGS) para puxar o CDI histórico.
 class Taxas {
 	private $DadosHistoricos;
 
 	public function __construct(){
-		$this -> Update();
+		$this -> Update('juros');
+		$this -> Update('salario');
 		$this -> Historico();
 	}
 
-	private function Api(){
-		$Json = @file_get_contents('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json');
+	private function Api($Tipo){
+		switch($Tipo){
+			case 'juros': 
+				$Json = @file_get_contents('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json');
+				break;
+
+			case 'salario':
+				$Json = @file_get_contents('https://api.bcb.gov.br/dados/serie/bcdata.sgs.1619/dados/ultimos/1?formato=json');
+				break;
+
+			default:
+				$Json = @file_get_contents('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json');
+		}
 		return (strlen($Json) == 0) ? false : $Json;
 	}
 
-	private function Update(){
-		$File = __ROOT__ . '/files/taxa_juros.json';
+	private function Update($Tipo = 'juros'){
+		switch($Tipo){
+			case 'juros':
+				$File = __ROOT__ . '/files/taxa_juros.json';
+				break;
+
+			case 'salario':
+				$File = __ROOT__ . '/files/salario_minimo.json';
+				break;
+
+			default:
+				$File = __ROOT__ . '/files/taxa_juros.json';
+		}
 		
 		if (!file_exists($File)) {
-			file_put_contents($File, $this -> Api());
+			file_put_contents($File, $this -> Api($Tipo));
 			return;
 		}
 
@@ -38,7 +86,7 @@ class Taxas {
 		// Verifica se a modificação foi em um mês anterior ao atual
     	if ($anoModificacao < $anoAtual || ($anoModificacao == $anoAtual && $mesModificacao < $mesAtual)) {
 			// Atualiza o arquivo
-			file_put_contents($File, $this -> Api());
+			file_put_contents($File, $this -> Api($Tipo));
 		}
 
 	}
@@ -67,27 +115,115 @@ class Taxas {
 
 // AGÊNCIA
 class Agencia {
-	public $numero;
+	public $numero, $id, $ConfigUpd, $key;
+	private $Agencia;
 
 	public function Criar($cep,$key){
 		global $db, $MS;
 		$key = ($key) ? BaseEL_encode(rand(999,999999)) : NULL;
-		$Ins = $db -> prepare("INSERT INTO agencia (ag_user,ag_num,ag_cep,ag_key) VALUES (?, (
+		$Ins = $db -> prepare("INSERT INTO agencia (ag_user,ag_num,ag_cep,ag_key,ag_fim) VALUES (?, (
 			SELECT MAX(ag_num) + 1 FROM agencia
-		), ?, ?)");
+		), ?, ?, (SELECT CURDATE() + INTERVAL 30 DAY))");
 		$Ins -> bind_param("iss", $MS['ui_id'], $cep, $key);
 		if(!$Ins -> execute()){return false;}
 		return $Ins -> insert_id;
 	}
 
+	public function CriarConta(){
+		global $db, $MS;
+		$Base = $db -> prepare("INSERT INTO clientes (cl_agencia,cl_conta,cl_digito,cl_user) VALUES (?,
+			(SELECT (MAX(cl_conta) + 1) FROM clientes as sub WHERE sub.cl_agencia = clientes.cl_agencia)
+		,1,?)"); dbE();
+		$Base -> bind_param('ii',$this->Agencia['ag_id'],$MS['ui_id']);
+		if($Base -> execute()){
+			return $Base -> insert_id;
+		}else{
+			// ppre($this->Agencia);
+			ppre($Base)	;
+			return false;
+		}
+	}
+
+	public function BuscarConta(){
+		global $db, $MS;
+		$Base = $db -> prepare("SELECT clientes.* FROM clientes
+		INNER JOIN agencia ON (agencia.ag_id = clientes.cl_agencia)
+		WHERE ag_num = ? AND ag_key = ? AND cl_user = ? LIMIT 1");
+		$Base -> bind_param("iii", $this->numero, $this->key, $MS['ui_id']);
+		$Base -> execute();
+		$Map = $Base -> get_result() -> fetch_assoc();
+		return (is_array($Map) AND array_key_exists('cl_id',$Map)) ? $Map : false;
+	}
+
 	public function Buscar(){
 		global $db; 
-		$Base = $db -> prepare("SELECT ag_num as numero, ag_cep as cep, LENGTH(ag_key) as chave, ui_nome as gerente FROM agencia
+		$Base = $db -> prepare("SELECT 
+			ag_id,
+			ag_num as numero, 
+			ag_cep as cep, 
+			ag_fim as fim,
+			LENGTH(ag_key) as chave, 
+			ui_nome as gerente,
+			GREATEST(0, DATEDIFF(agencia.ag_fim, NOW())) as ag_dias
+		FROM agencia
 		INNER JOIN userinfo ON (userinfo.ui_id = agencia.ag_user)
-		WHERE ag_num = ?");
+		WHERE ag_num = ?"); dbE();
 		$Base -> bind_param("i",$this->numero);
 		if(!$Base->execute()){return false;}
-		return $Base -> get_result() -> fetch_assoc();
+		$this -> Agencia = $Base -> get_result() -> fetch_assoc();
+		return $this -> Agencia;
+	}
+
+	public function getConfig(){
+		global $db;
+		$Config = ['taxas' => [], 'debitos' => [], 'config' => []];
+		try {
+			$Base = $db -> prepare("SELECT * FROM agencia_config WHERE agc_agencia = ?");
+			$Base -> bind_param("i", $this->id);
+			$Base -> execute();
+			foreach($Base -> get_result() -> fetch_all(MYSQLI_ASSOC) as $KeyC => $ViewC){
+				$Config['config'][$ViewC['agc_nome']] = $ViewC['agc_id'];
+				$Config[$ViewC['agc_nome']] = json_decode($ViewC['agc_valor'],true);
+			}
+		} catch(Exception $e){ }
+		return $Config;
+	}
+
+	public function setConfig($Nome,$Update=false){
+		global $db;
+
+		// É UM UPDATE?
+		if($Update){
+			$Base = $db -> prepare("UPDATE agencia_config SET agc_valor = ?, agc_dref = NOW() WHERE agc_agencia = ? AND agc_nome = ? LIMIT 1");
+		}else{
+			$Base = $db -> prepare("INSERT INTO agencia_config (agc_valor, agc_agencia, agc_nome) VALUES (?,?,?)");
+		}
+
+		$Base -> bind_param("sis", $this->ConfigUpd, $this->id, $Nome);
+		return boolval($Base -> execute());
+
+	}
+
+	public function Prorrogar(){
+		global $db;
+		$Base = $db -> prepare("UPDATE agencia SET ag_fim = DATE_ADD(ag_fim, INTERVAL 30 DAY) WHERE ag_id = ? LIMIT 1");
+		$Base -> bind_param('i', $this->id);
+		if($Base->execute()){
+			$_SESSION['gerente'][$this->id]['ag_dias'] += 30;
+			return true;
+		}else{ return false; }
+	}
+
+	public function AtualizarSession(){
+		global $MS;
+		
+		$User = new Usuario();
+		$User -> setID($MS['ui_id']);
+		$Agencias = $User -> getGerente();
+		if(is_array($Agencias) AND count($Agencias) > count($MS['gerente'])){
+			$_SESSION['gerente'] = $Agencias;
+			return true;
+		} return false;
 	}
 }
 
@@ -363,18 +499,24 @@ class Usuario
 			a.ag_user,
 			a.ag_cep,
 			a.ag_key,
+			a.ag_fim,
 			a.ag_dref,
+			GREATEST(0, DATEDIFF(a.ag_fim, NOW())) as ag_dias,
 			COUNT(c.cl_id) AS total_clientes
 		FROM  agencia a
 		LEFT JOIN clientes c ON a.ag_id = c.cl_agencia
 		WHERE  a.ag_user = ?
-		GROUP BY  a.ag_id, a.ag_num, a.ag_user, a.ag_cep, a.ag_key, a.ag_dref
-		ORDER BY a.ag_num ASC");
+		GROUP BY  a.ag_id, a.ag_num, a.ag_user, a.ag_cep, a.ag_key, a.ag_dref, ag_dias, a.ag_fim
+		ORDER BY a.ag_num ASC"); dbE();
 		$Base->bind_param("i", $this->id);
 		if ($Base->execute()) {
 			return ReKey($Base->get_result()->fetch_all(MYSQLI_ASSOC), 'ag_id');
 		}
 		return [];
+	}
+
+	public function getGerente(){
+		return $this -> Gerente();
 	}
 
 	public function ResetPass()

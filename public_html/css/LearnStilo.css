@@ -104,6 +104,11 @@ div.infomain-border-bottom {
 .font-calibri {font-family: Calibri;}
 
 /* RANGE INPUT */
+.placeholder-transparente::placeholder {
+    opacity: 0.3; /* Valor entre 0 (totalmente transparente) e 1 (totalmente opaco) */
+    color: #000; /* Cor opcional para o placeholder */
+}
+
 .rangeinput {
     -webkit-appearance: none;
     height: 8px;

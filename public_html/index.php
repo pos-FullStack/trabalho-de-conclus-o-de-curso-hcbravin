@@ -25,6 +25,7 @@ require_once __DIR__ . '/src/ConfigSystem.php';
                 } ?>
             </div>
         </div>
+
         <!-- Page content wrapper-->
         <div id="page-content-wrapper">
             <!-- Top navigation-->
@@ -37,7 +38,29 @@ require_once __DIR__ . '/src/ConfigSystem.php';
                     <div class="collapse ms-sm-3 navbar-collapse" id="navbarSupportedContent">
 
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <?php if(@count($MS['gerente'])){ ?>
+                            <li class="nav-item dropdown py-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarGerencia" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-bank me-1"></i> Gerência
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarGerencia">
+                                    <?php foreach($MS['gerente'] as $KeyG=>$ViewG){if(Data($ViewG['ag_dref'],'ano') == $ANOATUAL OR $ViewG['ag_dias'] > 0){ ?>
+                                    <li>
+                                        <a class="dropdown-item" href="/gerencia/<?=$KeyG;?>"> 
+                                            <div class="btn-group me-2">
+                                                <span class="btn btn-sm px-1 btn-dark ft-8 py-0"><?=Data($ViewG['ag_dref'],'ano');?></span>
+                                                <span class="btn btn-sm px-1 btn-<?=($ViewG['ag_dias'] < 10)?'danger':'info';?> ft-8 py-0"><?= ($ViewG['ag_dias'] < 10 ? '0': NULL) . $ViewG['ag_dias'];?></span>
+                                            </div>
+                                            <i class="fa fa-user-tie me-1"></i> <?=ZeroEsquerda($ViewG['ag_num']);?>
+                                        </a>
+                                    </li>
+                                    <?php }} ?>
+                                    <li><hr class="my-1"></li>
+                                    <li><a class="dropdown-item" href="/gerencia/desativadas">Agências Desativadas</a></li>
 
+                                </ul>
+                            </li>
+                            <?php } ?>
                         </ul>
 
                         <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
