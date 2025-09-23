@@ -436,7 +436,7 @@ class Usuario
 	public function Login($cpf = false, $senha = false)
 	{
 		global $db;
-		if (is_numeric($this->id) or strlen($this->cpf)) {
+		if (is_numeric($this->id) OR (is_string($this->cpf) AND strlen($this->cpf))) {
 			$findUser = $this->findUser();
 		} else {
 			$Base = $db->prepare("SELECT * FROM userinfo WHERE ui_cpf = ? AND ui_senha = md5(?) LIMIT 1");

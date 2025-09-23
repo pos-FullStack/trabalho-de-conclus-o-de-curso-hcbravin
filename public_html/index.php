@@ -38,7 +38,7 @@ require_once __DIR__ . '/src/ConfigSystem.php';
                     <div class="collapse ms-sm-3 navbar-collapse" id="navbarSupportedContent">
 
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <?php if(@count($MS['gerente'])){ ?>
+                            <?php if(isset($MS['gerente']) AND is_array($MS['gerente']) AND count($MS['gerente'])){ ?>
                             <li class="nav-item dropdown py-1">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarGerencia" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-bank me-1"></i> Gerência
