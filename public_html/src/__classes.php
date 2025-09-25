@@ -111,6 +111,21 @@ class Taxas {
 		
 		return $Media;
 	}
+
+	public function getSalarioMinimo(){
+		$Minimo = json_decode(file_get_contents(__ROOT__ . '/files/salario_minimo.json'),true)[0];
+		return $Minimo['valor'];
+	}
+}
+
+// PROFISSOES
+class Profissoes {
+
+	public function getProfissoes(){
+		global $db; 
+		$Base = $db -> query("SELECT * FROM profissoes ORDER BY pf_nome") -> fetch_all(MYSQLI_ASSOC);
+		return ReKey($Base,'pf_id');
+	}
 }
 
 // AGÊNCIA
@@ -131,20 +146,21 @@ class Agencia {
 
 	public function CriarConta(){
 		global $db, $MS;
-		$Base = $db -> prepare("INSERT INTO clientes (cl_agencia,cl_conta,cl_digito,cl_user) VALUES (?,
-			(SELECT (MAX(cl_conta) + 1) FROM clientes as sub WHERE sub.cl_agencia = clientes.cl_agencia)
-		,1,?)"); dbE();
-		$Base -> bind_param('ii',$this->Agencia['ag_id'],$MS['ui_id']);
+		if(!is_numeric($this->Agencia['ag_id'])){ return false; }
+		$ContaNumber = $db -> query("SELECT (MAX(cl_conta) + 1) as conta from clientes WHERE cl_agencia = '".$this->Agencia['ag_id']."'") -> fetch_assoc()['conta'];
+		if(is_null($ContaNumber)){ $ContaNumber = rand(10000,98765); }
+		$Base = $db -> prepare("INSERT INTO clientes (cl_agencia,cl_conta,cl_digito,cl_user) VALUES (?,?,1,?)"); dbE();
+		$Base -> bind_param('iii',$this->Agencia['ag_id'],$ContaNumber,$MS['ui_id']);
 		if($Base -> execute()){
 			return $Base -> insert_id;
 		}else{
 			// ppre($this->Agencia);
-			ppre($Base)	;
+			// ppre($Base)	;
 			return false;
 		}
 	}
 
-	public function BuscarConta(){
+	public function BuscarConta(){ // Busca uma conta;
 		global $db, $MS;
 		$Base = $db -> prepare("SELECT clientes.* FROM clientes
 		INNER JOIN agencia ON (agencia.ag_id = clientes.cl_agencia)
@@ -155,7 +171,7 @@ class Agencia {
 		return (is_array($Map) AND array_key_exists('cl_id',$Map)) ? $Map : false;
 	}
 
-	public function Buscar(){
+	public function Buscar(){ // Busca uma agência.
 		global $db; 
 		$Base = $db -> prepare("SELECT 
 			ag_id,
@@ -224,6 +240,25 @@ class Agencia {
 			$_SESSION['gerente'] = $Agencias;
 			return true;
 		} return false;
+	}
+
+	public function getContas(){
+		global $db;
+		$Minimo = new Taxas() -> getSalarioMinimo();
+		
+		$Base = $db -> prepare("SELECT 
+			userinfo.ui_nome,
+			clientes.*,
+			profissoes.*,
+			ROUND(pf_salario * ?,2) as cl_salario
+
+		FROM clientes 
+		INNER JOIN userinfo ON (userinfo.ui_id = clientes.cl_user)
+		LEFT JOIN profissoes ON (profissoes.pf_id = clientes.cl_profissao)
+		WHERE cl_agencia = ?");
+		$Base -> bind_param('di',$Minimo,$this -> id);
+		$Base -> execute();
+		return ReKey($Base -> get_result() -> fetch_all(MYSQLI_ASSOC),'cl_user');
 	}
 }
 

@@ -27,13 +27,16 @@
         $Historico = $Taxas -> MediaAnual();
         $Configuracoes = $Agencia -> getConfig();
 
-
-
         // VERIFICA SE EXISTEM DEBITOS CADASTRADOS, SE NAO, CARREGA O PADRAO
         $Configuracoes['debitos'] = (count($Configuracoes['debitos'])) ? $Configuracoes['debitos'] : json_decode(file_get_contents(__ROOT__.'/files/agencia_debitos_main.json'),true);
-        #ppre($Configuracoes);
+
+        // Contas
+        $Contas = $Agencia -> getContas();
+        $SalarioMinimo = new Taxas() -> getSalarioMinimo();
+        $Profissoes = new Profissoes() -> getProfissoes();
 
         require_once Views.'/gerencia/configuracoes.php';
-    }
+    
+    goto Fim;}
 
 Fim:

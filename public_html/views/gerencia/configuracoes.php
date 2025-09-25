@@ -1,14 +1,68 @@
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fa fa-briefcase me-1"></i> Profissões</button>
         <button class="nav-link" id="nav-sortereves-tab" data-bs-toggle="tab" data-bs-target="#nav-sortereves" type="button" role="tab" aria-controls="nav-sortereves" aria-selected="false"><i class="fa fa-masks-theater me-1"></i> Sorte ou Azar</button>
         <button class="nav-link" id="nav-debitos-tab" data-bs-toggle="tab" data-bs-target="#nav-debitos" type="button" role="tab" aria-controls="nav-debitos" aria-selected="false"><i class="fa fa-file-invoice-dollar me-1"></i> Débitos Automáticos</button>
         <button class="nav-link" id="nav-taxas-tab" data-bs-toggle="tab" data-bs-target="#nav-taxas" type="button" role="tab" aria-controls="nav-taxas" aria-selected="false"><i class="fa fa-chart-line me-1"></i> Taxas</button>
     </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade p-3" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">...</div>
-    <div class="tab-pane fade p-3 show active" id="nav-sortereves" role="tabpanel" aria-labelledby="nav-sortereves-tab" tabindex="0">
+    <div class="tab-pane fade p-3 show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+        <form action="/upg/agencia/porfissoes" method="post">
+            <div class="row justify-content-center mb-2">
+                <div class="col-12 col-sm-8 text-center text-sm-start mb-2">
+                    <button type="button" onclick="$('#TabelaProfissoes').toggle(500);" class="btn btn-sm btn-warning px-3"><i class="fa fa-briefcase me-1"></i> Lista de Profissões <span class="badge text-bg-dark ms-2"><?= count($Profissoes); ?></span></button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="$('#ProfissoesTodos').modal('show');"><i class="fa fa-person-digging me-1"></i> Definir para Todos</button>
+                </div>
+                <div class="col-12 col-sm-4 text-center text-sm-end mb-2">
+                    <button type="submit" class="btn btn-sm btn-success w-px-150"><i class="fa fa-save me-1"></i> Salvar</button>
+                    <input type="hidden" name="agencia" value="<?=$URI[1];?>">
+                </div>
+
+                <div class="col-12 col-sm-8 col-md-6">
+                    <table class="table table-striped table-sm ft-10 collapse shadow-md" id="TabelaProfissoes">
+                        <thead>
+                            <tr class="main">
+                                <td class="text-start">Nome</td>
+                                <td>Salario</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($Profissoes as $KeyP => $ViewP) { ?>
+                                <tr>
+                                    <td><?= $ViewP['pf_nome']; ?></td>
+                                    <td class="text-center d-flex justify-content-between"><span>R$</span> <span><?= number_format($ViewP['pf_salario'] * $SalarioMinimo, 2, ',', ''); ?></span></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <?php foreach ($Contas as $KeyC => $ViewC) { ?>
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
+                        <div class="card shadow-md card-hover">
+                            <div class="card-body p-2">
+                                <p class="fw-bold text-center"><?= mb_strtoupper($ViewC['ui_nome'], 'UTF-8'); ?></p>
+                                <select name="profissoes[<?= $ViewC['cl_id']; ?>]" class="form-select form-select-sm iProfissao">
+                                    <option value=""></option>
+                                    <?php foreach ($Profissoes as $KeyP => $ViewP) { ?>
+                                        <option value="<?= $KeyP; ?>" data-salario="<?= $ViewP['pf_salario']; ?>" <?= iSelect($KeyP, $ViewC['cl_profissao']); ?>><?= $ViewP['pf_nome']; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <div class="mt-1 text-end iSalario">
+                                    <span class="badge text-bg-success">R$ <?= str_replace([',', '.'], ['.', ','], $ViewC['cl_salario']); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+
+        </form>
+    </div>
+    <div class="tab-pane fade p-3" id="nav-sortereves" role="tabpanel" aria-labelledby="nav-sortereves-tab" tabindex="0">
         <div class="infomain bd-1 bd-primary mb-2 shadow-md">
             Sorte ou Azar é um sistema de cartas aleatórias que buscam simular situações do cotidiano onde o estudante poderá ter sorte (ganho) ou revés (perda), baseado em situações do cotidiano. Por exemplo, o gás acabou (revés), você achou um dinheiro no chão (sorte).
         </div>
@@ -20,7 +74,7 @@
                         <div class="row">
                             <div class="col-12 col-sm-3">
                                 <label for="sorte[quantidade]">Quantidade de Sorteio Semanais</label>
-                                <input type="number" step="1" min="0" max="10" name="sorte[quantidade]" id="sorte[quantidade]" class="w-75 mx-auto form-control form-control-sm placeholder-transparente text-center" placeholder="0 a 10" required value="<?=@$Configuracoes['sorte']['quantidade'];?>">
+                                <input type="number" step="1" min="0" max="10" name="sorte[quantidade]" id="sorte[quantidade]" class="w-75 mx-auto form-control form-control-sm placeholder-transparente text-center" placeholder="0 a 10" required value="<?= @$Configuracoes['sorte']['quantidade']; ?>">
                             </div>
                             <div class="col-12 col-sm-9 text-start align-self-center">
                                 <strong>Quantidade de Sorteio Semanais.</strong>
@@ -33,7 +87,7 @@
                 </div>
                 <div class="col-12 col-sm-4 col-md-2 text-end">
                     <button type="submit" class="btn btn-sm btn-success w-px-150"><i class="fa fa-save me-1"></i> Salvar</button>
-                    <input type="hidden" name="agencia" value="<?=$URI[1];?>">
+                    <input type="hidden" name="agencia" value="<?= $URI[1]; ?>">
                 </div>
             </div>
         </form>
@@ -133,6 +187,32 @@
         </form>
     </div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="ProfissoesTodos">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-bg-primary">
+                <span class="modal-title ft-11"><i class="fa fa-person-digging me-1"></i> Definir para Todos</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="ft-10">Selecione a profissão que será definida para todos os clientes. Lembre-se de após de definir, salvar as definições.</p>
+                <select id="ProfissoesDefinirSelect" class="form-select form-select-sm">
+                    <?php foreach ($Profissoes as $KeyP => $ViewP) { ?>
+                        <option value="<?= $KeyP; ?>" data-salario="<?= $ViewP['pf_salario']; ?>"><?= $ViewP['pf_nome']; ?></option>
+                    <?php } ?>
+                </select>
+                <div class="mt-3 d-flex justify-content-between">
+                    <span class="btn btn-sm btn-success">R$ <span class="valor" id="ProfissoesDefinirValor">0,00</span></span>
+                    <button type="button" class="btn btn-sm btn-primary" id="ProfissoesDefinirInsert"><i class="fa fa-wrench me-1"></i> Definir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     $(function() {
         $(document).on('click', 'button.iTrash', function() {
@@ -142,5 +222,18 @@
             const id = UniqID().replace('_', '');
             $('#nav-debitos-itens tbody').append($('#nav-debitos-itens tfoot').html().replaceAll('{id}', id));
         })
+        $('select.iProfissao').change(function() {
+            const minimo = '<?= $SalarioMinimo; ?>';
+            const salario = $(this).find('option[value="' + $(this).val() + '"]').data('salario');
+            $(this).closest('div.card-body').find('div.iSalario span').text('R$ ' + (minimo * salario).toFixed(2).replace('.', ','));
+        });
+        $('select#ProfissoesDefinirSelect').change(function() {
+            const minimo = '<?= $SalarioMinimo; ?>';
+            const salario = $(this).find('option[value="' + $(this).val() + '"]').data('salario');
+            $('#ProfissoesDefinirValor').text((minimo * salario).toFixed(2).replace('.', ','));
+        });
+        $('#ProfissoesDefinirInsert').click(function(){
+            $('select.iProfissao').val($('#ProfissoesDefinirSelect').val());
+        });
     });
 </script>

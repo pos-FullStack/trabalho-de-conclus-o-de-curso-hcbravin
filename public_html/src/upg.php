@@ -8,8 +8,6 @@ $Dados = ['P'=>[], 'B'=>[], 'U'=>[],'E'=>[],'D'=>[], 'PRO'=>['U'=>0,'I'=>0,'D'=>
 // ----------------------------------------------- INICIA A VERIFICAÇÃO DE ANO -----------------------------------------------
 if($MEUTIPO != 0 AND $ANOBASE != $ANOATUAL){ Alert("Alterações Bloqueadas para o ano de $ANOBASE."); goto Fim; }
 
-
-
 if($URI[1]=='agencia'){
 
     $Agencia = new Agencia();
@@ -47,6 +45,14 @@ if($URI[1]=='agencia'){
                 usort($P['debitos'], function($a, $b) {return strcmp($a['nome'], $b['nome']);});
                 $Agencia -> ConfigUpd = json_encode($P['debitos']);
                 if(!$Agencia -> setConfig('debitos', $Update)){$C++;}
+            }
+        }
+
+        if($URI[2]=='porfissoes'){
+            $UpgP = $db -> prepare("UPDATE clientes SET cl_profissao = ? WHERE cl_agencia = ? AND cl_user = ? LIMIT 1");
+            foreach($P['profissoes'] as $KeyE=>$ViewP){
+                $UpgP -> bind_param('iii', $ViewP, $agencia, $KeyE);
+                if(!$UpgP -> execute()){$C++;}
             }
         }
 
