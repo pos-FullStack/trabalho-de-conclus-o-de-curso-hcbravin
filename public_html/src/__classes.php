@@ -244,8 +244,7 @@ class Agencia {
 
 	public function getContas(){
 		global $db;
-		$Minimo = new Taxas() -> getSalarioMinimo();
-		
+		$Minimo = new Taxas() -> getSalarioMinimo();		
 		$Base = $db -> prepare("SELECT 
 			userinfo.ui_nome,
 			clientes.*,
@@ -259,6 +258,20 @@ class Agencia {
 		$Base -> bind_param('di',$Minimo,$this -> id);
 		$Base -> execute();
 		return ReKey($Base -> get_result() -> fetch_all(MYSQLI_ASSOC),'cl_user');
+	}
+
+	public function findConta($Conta){
+		$Contas = $this -> getContas();
+		$Key = false;
+		foreach($Contas as $KeyC=>$ViewC){
+			if(is_array($ViewC) AND array_key_exists('cl_id', $ViewC) AND $ViewC['cl_id'] == $Conta){
+				$Key = $KeyC; break;
+			}
+		}
+		if($Key !== false){	
+			return $Contas[$Key];
+
+		}else{ return false; }
 	}
 }
 

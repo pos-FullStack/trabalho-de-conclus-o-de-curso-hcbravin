@@ -49,7 +49,7 @@ if($URI[1]=='agencia'){
         }
 
         if($URI[2]=='porfissoes'){
-            $UpgP = $db -> prepare("UPDATE clientes SET cl_profissao = ? WHERE cl_agencia = ? AND cl_user = ? LIMIT 1");
+            $UpgP = $db -> prepare("UPDATE clientes SET cl_profissao = ? WHERE cl_agencia = ? AND cl_id = ? LIMIT 1");
             foreach($P['profissoes'] as $KeyE=>$ViewP){
                 $UpgP -> bind_param('iii', $ViewP, $agencia, $KeyE);
                 if(!$UpgP -> execute()){$C++;}

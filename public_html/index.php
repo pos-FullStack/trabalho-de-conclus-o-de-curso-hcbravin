@@ -71,8 +71,10 @@ require_once __DIR__ . '/src/ConfigSystem.php';
                                         <i class="fa fa-plus me-1"></i> Abrir
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarNewAccount">
-                                        <li><a class="dropdown-item" href="/nova-conta"><i class="fa fa-bank me-1"></i> Abrir Agência</a></li>
-                                        <li><a class="dropdown-item" href="/nova-conta"><i class="fa fa-piggy-bank me-1"></i> Abrir Conta</a></li>
+                                        <li><a class="dropdown-item" href="/nova-conta/abrir"><i class="fa fa-bank me-1"></i> Abrir Agência</a></li>
+                                        <li><a class="dropdown-item" href="/nova-conta/abrir"><i class="fa fa-piggy-bank me-1"></i> Abrir Conta</a></li>
+                                        <li><hr class="my-1"></li>
+                                        <li><a class="dropdown-item" href="/nova-conta/entrar"><i class="fa fa-piggy-bank me-1"></i> Acessar Conta</a></li>
                                     </ul>
                                 </li>
 

@@ -22,6 +22,22 @@
     $Taxas = New Taxas();
     require_once Views.'/gerencia/header.php';
 
+    if($URI[2]=='contas'){
+        
+        if(!$URI[3]){ // Exibe todas as contas
+            $Contas = $Agencia -> getContas();
+            require_once Views.'/gerencia/contas.php';
+
+        }
+
+        if(is_numeric($URI[3])){ // Abre a conta selecionada
+            $Conta = $Agencia -> findConta($URI[3]);
+            if($Conta == false){alert('A conta que você quer acessar não foi encontrada!'); goto Fim;}
+            require_once Views.'/gerencia/contas_abrir.php';
+        }
+
+    goto Fim;}
+
     if($URI[2]=='configuracoes'){
         
         $Historico = $Taxas -> MediaAnual();

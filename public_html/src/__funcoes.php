@@ -109,6 +109,9 @@ function Data($data=null,$tipo=null){
 	if($tipo == 'agenda'){ // USADO PARA SEMANAS DA AGENDA
 		for($c=0;$c<=4;$c++){$Fim[] = date('d/m/Y', strtotime($data." + $c day"));} return $Fim;
     }
+	if($tipo == 'datatime-br'){
+		return date('d/m/Y H:i', strtotime($data));
+	}
 }
 function ZeroEsquerda($numero) {
     // Converte o número para string para contar os caracteres
