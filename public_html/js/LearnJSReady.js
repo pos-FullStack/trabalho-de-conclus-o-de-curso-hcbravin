@@ -17,10 +17,9 @@ $(function(){
     })
 
     $('[data-mask]').each(function() {
-        var maskType = $(this).data('mask'); // Pega o valor de data-mask
+        var maskType = $(this).data('mask');
         var input = $(this);
 
-        // Estrutura similar ao switch-case do PHP
         switch (maskType) {
             case 'cep':
                 input.mask('00000-000');
@@ -31,7 +30,7 @@ $(function(){
                 break;
 
             case 'telefone':
-                input.mask('(00) 00000-0000'); // Assume celular como padrão
+                input.mask('(00) 00000-0000');
                 break;
 
             case 'data':
@@ -42,4 +41,8 @@ $(function(){
                 console.warn('Máscara não definida para:', maskType);
         }
     });
+
+    if($('[data-autobg="true"]').length){
+        $('#page-content-wrapper').css("background-image", "url('/images/background-poly.jpg')");
+    }
 });

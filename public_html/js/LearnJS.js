@@ -92,7 +92,7 @@ jQuery.fn.extend({
 				}, timeout);
 			}
 		});	
-	},
+	}
 });
 
 jQuery.extend(jQuery,{

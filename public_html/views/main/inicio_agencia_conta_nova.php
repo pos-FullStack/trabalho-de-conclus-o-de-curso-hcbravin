@@ -1,10 +1,4 @@
-<div class="row justify-content-center">
-    <div class="col-12 mb-3">
-        <div class="infomain bd-1 bd-danger shadow-md mb-2">
-            Poxa, sentimos muito, mas, não encontramos nenhuma conta no nosso banco relacionado ao seus dados.
-        </div>
-    </div>
-
+<div class="row justify-content-center" data-autobg="true">
     <div class="col-12 col-sm-6 col-md-4">
         <div class="card shadow-md card-hover">
             <div class="card-body text-center background-virtual-bank">
@@ -29,4 +23,3 @@
         </div>
     </div>
 </div>
-

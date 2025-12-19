@@ -1,6 +1,6 @@
 {
     "require": {
-        "mobiledetect/mobiledetectlib": "^2.8",
+        "mobiledetect/mobiledetectlib": "^4.8",
         "phpmailer/phpmailer": "^6.2",
         "intervention/image": "^2.5",
         "imagine/imagine": "^1.2",

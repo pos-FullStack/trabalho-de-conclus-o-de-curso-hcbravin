@@ -61,25 +61,37 @@ require_once __DIR__ . '/src/ConfigSystem.php';
                                 </ul>
                             </li>
                             <?php } ?>
-                        </ul>
+                            <?php if(isset($MS['contas']) AND is_array($MS['contas']) AND count($MS['contas'])){ ?>
+                            <li class="nav-item dropdown py-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarContas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-bank me-1"></i> Contas
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarContas">
+                                    <?php foreach($MS['contas'] as $KeyG=>$ViewG){if(Data($ViewG['cl_dref'],'ano') == $ANOATUAL){ ?>
+                                    <li>
+                                        <a class="dropdown-item" href="/conta/<?=$KeyG;?>"> 
+                                        <i class="fa fa-bank me-1"></i> <?=ZeroEsquerda($ViewG['ag_num']);?> <i class="fa fa-user-tie mx-1"></i> <?=ZeroEsquerda($ViewG['cl_conta']) . ' - ' . $ViewG['cl_digito'];?> 
+                                        </a>
+                                    </li>
+                                    <?php }} ?>
 
-                        <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                            <?php if (Logado()) { ?>
-
-                                <li class="nav-item dropdown py-1">
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown py-1">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarNewAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fa fa-plus me-1"></i> Abrir
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarNewAccount">
                                         <li><a class="dropdown-item" href="/nova-conta/abrir"><i class="fa fa-bank me-1"></i> Abrir Agência</a></li>
                                         <li><a class="dropdown-item" href="/nova-conta/abrir"><i class="fa fa-piggy-bank me-1"></i> Abrir Conta</a></li>
-                                        <li><hr class="my-1"></li>
-                                        <li><a class="dropdown-item" href="/nova-conta/entrar"><i class="fa fa-piggy-bank me-1"></i> Acessar Conta</a></li>
                                     </ul>
                                 </li>
+                            <?php } ?>
+                        </ul>
 
-                                <li class="nav-item"><a class="nav-link" href="/logout"><span class="badge-alt rounded-1 py-2 text-bg-danger" data-toggle="tooltip" title="Sair"><i class="fa fa-right-from-bracket"></i> <span class="d-md-none">Sair</span></span></a></li>
-
+                        <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                            <?php if (Logado()) { ?>
+                                <li class="nav-item"><a class="nav-link" href="/logout"><span class="badge-alt rounded-1 py-2 text-bg-danger" data-toggle="tooltip" title="Sair"><i class="fa fa-right-from-bracket"></i> <span class="d-none ft-10 ms-1 d-sm-inline-block">Sair</span></span></a></li>
 
                             <?php } else { ?>
 

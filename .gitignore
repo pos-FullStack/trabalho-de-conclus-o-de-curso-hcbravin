@@ -2,3 +2,5 @@
 /error.log.php
 /error.log.bak
 /*.lock
+/access.log
+/error.log

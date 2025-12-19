@@ -1,14 +1,6 @@
 <?php 
-
-    if(!is_numeric($MS['id'])){
-        require_once Views . '/main/login_selecionar_conta.php';
-    
-    }else{
-    
-        $Card = new Cartoes();
-        $Card -> conta = $MS['id'];
-        $Cartoes = $Card -> MeusCartoes();
-        require_once Views . '/main/inicio.php';
-
+    if(isset($MS['contas'],$MS['gerente']) AND count($MS['contas']) == 1 AND count($MS['gerente']) > 0){
+        shdr("conta/" . reset($MS['contas'])['cl_id'],0);
     }
+    require_once Views . '/main/inicio.php';
     

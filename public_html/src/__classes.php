@@ -2,6 +2,47 @@
 
 use Intervention\Image\ImageManager; 
 
+// Investimentos
+class Investimentos {
+
+	public $conta;
+	private $user;
+
+	public function __construct($conta){
+		global $MS;
+		
+		$this -> conta = $conta;
+		$this -> user = $MS['ui_id'];
+	}
+
+	public function Tipos($Tipo=false){
+		$Tipos = [
+			1 => ['nome' => 'Poupança', 'taxa' => 0.05],
+			2 => ['nome' => 'Tesouro Direto'],
+			3 => ['nome' => 'Certificado de Depósito Bancário (CDB)']
+		];
+
+		if($Tipo === false){ return $Tipos; }else{
+			if(is_numeric($Tipo) AND array_key_exists($Tipo,$Tipos)){
+				return $Tipos[$Tipo];
+			}
+		}
+
+		return false;
+	}
+
+	public function Listar(){
+		global $db;
+
+		$Base = $db -> prepare("SELECT investimentos.* FROM investimentos 
+		INNER JOIN clientes ON (clientes.cl_id = investimentos.inv_cliente)
+		WHERE inv_cliente = ? AND cl_user = ? ORDER BY inv_dref ASC");
+		$Base -> bind_param("ii", $this->conta, $this->user);
+		$Base -> execute();
+		return ReKey($Base -> get_result() -> fetch_all(MYSQLI_ASSOC),'inv_id');
+	}
+}
+
 // SORTE OU REVES
 class Sorte {
 	private $Cards, $Salario;
@@ -149,13 +190,16 @@ class Agencia {
 		if(!is_numeric($this->Agencia['ag_id'])){ return false; }
 		$ContaNumber = $db -> query("SELECT (MAX(cl_conta) + 1) as conta from clientes WHERE cl_agencia = '".$this->Agencia['ag_id']."'") -> fetch_assoc()['conta'];
 		if(is_null($ContaNumber)){ $ContaNumber = rand(10000,98765); }
-		$Base = $db -> prepare("INSERT INTO clientes (cl_agencia,cl_conta,cl_digito,cl_user) VALUES (?,?,1,?)"); dbE();
+		$Base = $db -> prepare("INSERT INTO clientes (cl_agencia,cl_conta,cl_digito,cl_user,cl_profissao) VALUES (?,?,1,?,(SELECT pf_id FROM profissoes ORDER BY RAND() LIMIT 1))"); dbE();
 		$Base -> bind_param('iii',$this->Agencia['ag_id'],$ContaNumber,$MS['ui_id']);
 		if($Base -> execute()){
+			// Atualiza as contas
+			$User = new Usuario();
+			$User -> setID($MS['ui_id']);
+			$_SESSION['contas'] = $User -> getContas();
+
 			return $Base -> insert_id;
 		}else{
-			// ppre($this->Agencia);
-			// ppre($Base)	;
 			return false;
 		}
 	}
@@ -236,10 +280,11 @@ class Agencia {
 		$User = new Usuario();
 		$User -> setID($MS['ui_id']);
 		$Agencias = $User -> getGerente();
+		
 		if(is_array($Agencias) AND count($Agencias) > count($MS['gerente'])){
 			$_SESSION['gerente'] = $Agencias;
 			return true;
-		} return false;
+		} return true;
 	}
 
 	public function getContas(){
@@ -524,9 +569,20 @@ class Usuario
 		if (!is_numeric($this->id)) {
 			return [];
 		}
-		$Base = $db->prepare("SELECT clientes.*, ui_nome FROM clientes 
+
+		$SalarioMinimo = new Taxas() -> getSalarioMinimo();
+		$SalarioMinimo = is_numeric($SalarioMinimo) ? $SalarioMinimo : 0;
+
+		$Base = $db->prepare("SELECT 
+			clientes.*, 
+			profissoes.*, 
+			ROUND(pf_salario * $SalarioMinimo, 2) as pf_salario_valor,
+			agencia.ag_num, agencia.ag_cep, agencia.ag_dref,
+			ui_nome 
+		FROM clientes 
 		INNER JOIN agencia ON (agencia.ag_id = clientes.cl_agencia)
 		INNER JOIN userinfo ON (userinfo.ui_id = agencia.ag_user)
+		LEFT JOIN profissoes ON (profissoes.pf_id = clientes.cl_profissao)
 		WHERE cl_user = ? ORDER BY cl_tipo ASC, cl_dref DESC");
 		$Base->bind_param("i", $this->id);
 		if ($Base->execute()) {
