@@ -1,6 +1,11 @@
-/*.log
-/error.log.php
-/error.log.bak
-/*.lock
-/access.log
-/error.log
+./*.log
+./error.log.php
+./error.log.bak
+./*.lock
+./access.log
+./error.log
+error.log.bak
+error.log.php
+access.log
+dbError.log
+error.log
