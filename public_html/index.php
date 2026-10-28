@@ -32,7 +32,14 @@ if($URI[0] === 'pdf'){
     ?>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom d-print-none">
-        <div class="container-fluid justify-content-end">
+        <div class="container-fluid justify-content-between">
+            <?php if($Logado AND $Mobile AND $MS['convites']){ ?>
+            <!-- Elemento que irá gerar notificações gerais em relação a conta -->
+            <a class="navbar-brand d-sm-none float-start ms-2" href="/account/convites">
+                <i class="bi bi-envelope-exclamation-fill align-self-center" id="MainNotificacoesAccount"></i>
+            </a>
+            <?php } ?>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -106,11 +113,20 @@ if($URI[0] === 'pdf'){
                         <?php if(isset($MS['rootAcess']) AND $MS['rootAcess']){ ?>
                         <li class="nav-item"><a class="nav-link" href="/admin/usuarios/reset"><span class="btn btn-sm btn-light py-1 ft-10"><i class="bi bi-arrow-counterclockwise"></i> <span class="ft-10 ms-1">Reset</span></span></a></li>
                         <?php } ?>
+                        <li class="nav-item">
+                            <?php if($Logado AND !$Mobile AND $MS['convites']){ ?>
+                            <!-- Elemento que irá gerar notificações gerais em relação a conta -->
+                            <a class="nav-link" href="/account/convites">
+                                <div class="btn btn-sm btn-warning" id="MainNotificacoesAccount">
+                                    <i class="bi bi-envelope-exclamation-fill align-self-center"></i>
+                                </div>
+                            </a>
+                            <?php } ?>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="/logout"><span class="btn btn-sm btn-danger ft-10 py-1"><i class="bi bi-door-closed-fill"></i> <span class="ft-10 ms-1">Sair</span></span></a></li>
 
                     <?php } else { ?>
 
-                        <!-- <li class="nav-item"><span class="nav-link px-1"><button type="button" id="UserCadastrar" class="UserCadastrar btn btn-sm btn-primary" onclick="$('#UserCadastrarModal').modal('show');"><i class="fa fa-user-plus me-1"></i> Criar Conta</button></span></li> -->
                         <li class="nav-item"><span class="nav-link px-1"><button type="button" id="UserLogin" class="UserLogin btn btn-sm btn-primary fw-bold" onclick="$('#UserLoginModal').modal('show');"><i class="bi bi-key me-1"></i> Acessar sua Conta</button></span></li>
                     <?php } ?>
                 </ul>

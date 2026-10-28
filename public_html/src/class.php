@@ -255,7 +255,7 @@ class Taxas
 	{
 		$this->Update('dolar');
 		$Dados = json_decode(file_get_contents(PublicHTML . '/files/dolar.json'), true);
-		return reset($Dados)['valor'];
+		return (is_array($Dados) AND count($Dados)) ? reset($Dados)['valor'] : 1;
 	}
 }
 
@@ -673,6 +673,56 @@ class Usuario
 	public function getContas()
 	{
 		return $this->Contas();
+	}
+
+	public function getConvites(): array {
+		global $db;
+		
+		if(!is_numeric($this -> id)) return [];
+
+		$Map = [
+			'subgerentes' => []
+		];
+
+		try {
+			// Convite de subgerente;
+			$Base = $db->prepare("SELECT 
+				agencia_gerentes.*, 
+				agencia.*,
+				user_nome
+				
+			FROM agencia_gerentes 
+			INNER JOIN agencia ON (agencia.ag_id = agencia_gerentes.agg_agencia)
+			INNER JOIN user ON (user.user_id = agencia.ag_user)
+			WHERE agg_user = ? AND agg_ativo = 2");
+			$Base -> bind_param("i", $this -> id);
+			$Base -> execute();
+			$Map['subgerentes'] = $Base -> get_result() -> fetch_all(MYSQLI_ASSOC);
+				
+			return $Map;
+			
+		} catch (Exception $e) {
+			return $Map;
+		}
+	}
+	public function setConvite(int $id, int $status, string $local): bool {
+		global $db;
+
+		switch ($local) {
+			case 'subgerentes':
+				try {
+					$Base = $db->prepare("UPDATE agencia_gerentes SET agg_ativo = ? WHERE agg_id = ? AND agg_user = ? LIMIT 1");
+					$Base -> bind_param("iii", $status, $id, $this -> id);
+					$Base -> execute();
+					return true;
+
+				} catch (Exception $e) {
+					return false;	
+				}
+				break;
+		}
+
+		return false;
 	}
 
 	public function updateSession() {}

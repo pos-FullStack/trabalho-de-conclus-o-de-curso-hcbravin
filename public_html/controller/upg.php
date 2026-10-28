@@ -6,6 +6,26 @@ if (!Logado()) { goto Fim; }
 $P = $_POST; $countErro = 0;
 // =========================================================================
 
+// Atualização sobre a account global do sistema
+if($URI[1] == 'account'){
+
+    $Usuario = new Usuario();
+
+    // Atualização de convites
+    if($URI[2] == 'convites'){
+        // Atualiza informação do convite.
+        if(!$Usuario -> setConvite($URI[3],1,'subgerentes')){
+            $countErro++;
+        }else{
+            // Remove o item da lista de convites
+            $_SESSION['convites'] = (isset($_SESSION['convites']) ? $_SESSION['convites'] - 1 : 0);
+        }
+        shdr('account/convites');
+    goto Status;}
+
+
+goto Status;}
+
 // Atualizações referente a Agências
 if ($URI[1] == 'agencia') {
 
@@ -135,7 +155,7 @@ if ($URI[1] == 'agencia') {
         if (!$Agencia->Prorrogar()) { $countErro++; }
         shdr("gerencia/{$Agencia->id}/configuracoes");
     goto Status;}
-}
+goto Status;}
 
 // Atualizacoes referentes a conta
 if ($URI[1]=='conta'){
@@ -351,7 +371,7 @@ if ($URI[1]=='conta'){
             
         goto Status;}
     }
-}
+goto Status;}
 
 Status: 
     require_once Error . '/systemEngineStatus.php'; // Apesar de estar em error, este arquivo exibe o status das operações do sistema

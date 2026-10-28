@@ -30,6 +30,9 @@ if($URI[1] == 'google'){
         $findUSer = $User -> findUser();
         $User -> getBancoInfo(); // Inicia as informações de contas e gerencias
 
+        // 5. Busca informações sobre convites
+        $_SESSION['convites'] = array_sum(array_map('count', array_filter($User -> getConvites(), 'is_array')));
+
         $_SESSION = array_merge($_SESSION, $findUSer);
         $MS = $_SESSION; // Atualiza a variável global de sessão do sistema
 

@@ -1,8 +1,26 @@
 (function($){
     $.fn.extend({
-        pulsar: function (n = 2) {
+        pulsar: function (n = 2, delay = 200) {
+            // Caso queira que o efeito seja repetido infinitamente, basta colocar o valor de n como 0
+             if (n === 0) {
+                const $el = this; // guarda a referência do jQuery
+                const ciclo = delay * 2; // tempo total de um pulso (ida + volta)
+
+                const animar = function () {
+                    $el.fadeTo(delay, 0.3).fadeTo(delay, 1.0);
+                };
+
+                animar(); // executa imediatamente o primeiro pulso
+                const intervalo = setInterval(animar, ciclo + 50); // leve folga entre ciclos
+
+                // Se quiser poder parar depois, guarda o id no próprio elemento:
+                $el.data('pulsarInterval', intervalo);
+                return this;
+            }
+
+            // Caso queira que o efeito seja repetido, basta colocar o valor de n como 0
             for(i = 1; i <= n; i++) {
-                this.fadeTo(200, 0.3).fadeTo(200, 1.0);
+                this.fadeTo(delay, 0.3).fadeTo(delay, 1.0);
             }
             return;
         }
@@ -10,6 +28,8 @@
 })(jQuery);
 
 $(function () {
+
+    $('#MainNotificacoesAccount').pulsar(0, 1000);
 
     function isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
